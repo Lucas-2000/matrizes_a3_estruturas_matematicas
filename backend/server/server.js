@@ -5,6 +5,7 @@ import { nula } from '../routes/nula.js';
 import { diagonalPrincipal } from '../routes/diagonal-principal.js';
 import { diagonalSecundaria } from '../routes/diagonal-secundaria.js';
 import { soma } from '../routes/soma.js';
+import { subtracao } from '../routes/substracao.js';
 
 const app = express()
 
@@ -16,5 +17,6 @@ app.use("/matriz", nula)
 app.use("/matriz", diagonalPrincipal)
 app.use("/matriz", diagonalSecundaria)
 app.use("/matriz", soma)
+app.use("/matriz", subtracao)
 
 app.listen(3333, () => console.log('Server rodando na porta 3333'))
