@@ -18,17 +18,21 @@ subtracao.post("/subtracao", (req, res) => {
   const matrizB = geraMatriz(rowsMatrizB, columnsMatrizB, valuesMatrizB)
 
   let resultado = [];
-    
+  let passoAPasso = [];
+
   for (let i = 0; i < matrizA.length; i++) {
       let linhaResultado = [];
+      let passoLinha = [];
       for (let j = 0; j < matrizA[i].length; j++) {
           let subtracao = matrizA[i][j] - matrizB[i][j];
           linhaResultado.push(subtracao);
+          passoLinha.push(`${matrizA[i][j]} - ${matrizB[i][j]} = ${subtracao}`);
       }
       resultado.push(linhaResultado);
+      passoAPasso.push(passoLinha);
   }
   
-  res.status(200).send({subtracao: resultado})
+  res.status(200).send({ subtracao: resultado, passoAPasso: passoAPasso });
 })
 
 export {subtracao}

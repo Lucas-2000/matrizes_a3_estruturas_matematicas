@@ -18,17 +18,21 @@ soma.post("/soma", (req, res) => {
   const matrizB = geraMatriz(rowsMatrizB, columnsMatrizB, valuesMatrizB)
 
   let resultado = [];
-    
+  let passoAPasso = [];
+
   for (let i = 0; i < matrizA.length; i++) {
       let linhaResultado = [];
+      let passoLinha = [];
       for (let j = 0; j < matrizA[i].length; j++) {
           let soma = matrizA[i][j] + matrizB[i][j];
           linhaResultado.push(soma);
+          passoLinha.push(`${matrizA[i][j]} + ${matrizB[i][j]} = ${soma}`);
       }
       resultado.push(linhaResultado);
+      passoAPasso.push(passoLinha);
   }
   
-  res.status(200).send({soma: resultado})
+  res.status(200).send({ soma: resultado, passoAPasso: passoAPasso });
 })
 
 export {soma}
