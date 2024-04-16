@@ -5,12 +5,12 @@ const nula = Router()
 nula.post("/nula", (req, res) => {
   const {rows, columns} = req.body;
 
-  const matrix = Array.from({
+  const matrizNula = Array.from({
       length: columns, 
   }, () => new Array(rows).fill(0))
 
 
-  res.send(matrix);
+  res.status(200).send({nula: matrizNula})
 })
 
 export {nula}
