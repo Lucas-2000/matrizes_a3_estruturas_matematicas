@@ -4,14 +4,30 @@ import { geraMatriz } from "../utils/gera-matriz.js";
 const multiplicacao = Router();
 
 multiplicacao.post("/multiplicacao", (req, res) => {
-  const { rowsMatrizA, columnsMatrizA, valuesMatrizA, rowsMatrizB, columnsMatrizB, valuesMatrizB } = req.body;
+  const {
+    rowsMatrizA,
+    columnsMatrizA,
+    valuesMatrizA,
+    rowsMatrizB,
+    columnsMatrizB,
+    valuesMatrizB,
+  } = req.body;
 
-  if (!rowsMatrizA || !columnsMatrizA || !valuesMatrizA || !rowsMatrizB || !columnsMatrizB || !valuesMatrizB) {
+  if (
+    !rowsMatrizA ||
+    !columnsMatrizA ||
+    !valuesMatrizA ||
+    !rowsMatrizB ||
+    !columnsMatrizB ||
+    !valuesMatrizB
+  ) {
     return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
   if (columnsMatrizA !== rowsMatrizB) {
-    return res.status(400).send({ erro: "O número de colunas da primeira matriz deve ser igual ao número de linhas da segunda matriz para a multiplicação ser possível" });
+    return res.status(400).send({
+      erro: "O número de colunas da primeira matriz deve ser igual ao número de linhas da segunda matriz para a multiplicação ser possível",
+    });
   }
 
   const matrizA = geraMatriz(rowsMatrizA, columnsMatrizA, valuesMatrizA);

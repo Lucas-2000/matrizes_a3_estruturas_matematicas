@@ -1,20 +1,22 @@
 import { Router } from "express";
 
-const nula = Router()
+const nula = Router();
 
 nula.post("/nula", (req, res) => {
-  const {rows, columns} = req.body;
+  const { rows, columns } = req.body;
 
   if (!rows || !columns) {
-    return res.status(400).send({erro: "Dados de entrada inválidos"});
+    return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
-  const matrizNula = Array.from({
-      length: columns, 
-  }, () => new Array(rows).fill(0))
+  const matrizNula = Array.from(
+    {
+      length: columns,
+    },
+    () => new Array(rows).fill(0)
+  );
 
+  res.status(200).send({ nula: matrizNula });
+});
 
-  res.status(200).send({nula: matrizNula})
-})
-
-export {nula}
+export { nula };
