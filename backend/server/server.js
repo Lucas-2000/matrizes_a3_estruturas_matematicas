@@ -8,6 +8,7 @@ import { soma } from "../routes/soma.js";
 import { subtracao } from "../routes/substracao.js";
 import { multiplicacao } from "../routes/multiplicacao.js";
 import { multiplicacaoPorEscalar } from "../routes/multiplicacao-por-escalar.js";
+import { determinante } from "../routes/determinante.js";
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/matriz", soma);
 app.use("/matriz", subtracao);
 app.use("/matriz", multiplicacao);
 app.use("/matriz", multiplicacaoPorEscalar);
+app.use("/matriz", determinante);
 
 app.listen(3333, () => console.log("Server rodando na porta 3333"));
