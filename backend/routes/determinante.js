@@ -5,25 +5,25 @@ import { calcularDeterminanteLaplace } from "../utils/calculo-determinante.js";
 const determinante = Router();
 
 determinante.post("/determinante", (req, res) => {
-  const { rows, columns, matrixValues } = req.body;
+  const { rows, cols, matrix1 } = req.body;
 
-  if (!rows || !columns || !matrixValues || !Array.isArray(matrixValues)) {
+  if (!rows || !cols || !matrix1 || !Array.isArray(matrix1)) {
     return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
-  if (rows <= 0 || columns <= 0) {
+  if (rows <= 0 || cols <= 0) {
     return res
       .status(400)
       .send({ erro: "A matriz deve ter pelo menos uma linha e uma coluna." });
   }
 
-  if (rows !== columns) {
+  if (rows !== cols) {
     return res.status(400).send({
       erro: "A matriz deve ser quadrada para calcular o seu determinante",
     });
   }
 
-  const matriz = geraMatriz(rows, columns, matrixValues);
+  const matriz = geraMatriz(rows, cols, matrix1);
 
   const det = calcularDeterminanteLaplace(matriz);
 
