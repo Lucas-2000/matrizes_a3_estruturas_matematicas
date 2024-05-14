@@ -5,19 +5,19 @@ import { calcularMatrizInversa } from "../utils/calculo-inversa.js";
 const inversa = Router();
 
 inversa.post("/inversa", (req, res) => {
-  const { rows, columns, matrixValues } = req.body;
+  const { rows, cols, matrix1 } = req.body;
 
-  if (!rows || !columns || !matrixValues || !Array.isArray(matrixValues)) {
+  if (!rows || !cols || !matrix1 || !Array.isArray(matrix1)) {
     return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
-  if (rows <= 0 || columns <= 0) {
+  if (rows <= 0 || cols <= 0) {
     return res
       .status(400)
       .send({ erro: "A matriz deve ter pelo menos uma linha e uma coluna." });
   }
 
-  const matrix = geraMatriz(rows, columns, matrixValues);
+  const matrix = geraMatriz(rows, cols, matrix1);
 
   const matrizInversa = calcularMatrizInversa(matrix);
 
