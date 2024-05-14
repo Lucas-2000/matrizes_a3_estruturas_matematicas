@@ -36,18 +36,22 @@ export const MatrixCalc = () => {
     };
 
     const handleCalculationTypeChange = (type: string) => {
-        if (type === "determinante" || "diagonal-principal" || "diagonal-secundaria") {
+        if (type === "determinante" || type === "diagonal-principal" || type === "diagonal-secundaria" ||
+            type === "transposta"
+        ) {
             setMostrarDiv(false);
         } else {
-            setMostrarDiv(true)
+            setMostrarDiv(true);
         }
-
+        console.log(mostrarDiv)
         setCalculationType(type);
         console.log(calculationType);
     };
 
     function setMatrixCalc() {
-        if (calculationType === "determinante" || "diagonal-principal" || "diagonal-secundaria") {
+        if (calculationType === "determinante" || calculationType === "diagonal-principal" || calculationType === "diagonal-secundaria" ||
+            calculationType === "transposta"
+        ) {
             try {
                 const array: number[] = matrix1.flatMap(subarray => subarray);
                 fetch(`http://localhost:3333/matriz/${calculationType}`, {
@@ -111,11 +115,13 @@ export const MatrixCalc = () => {
                     <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("determinante")}>Determinante</Button>
                     <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("diagonal-principal")}>Diagonal Principal</Button>
                     <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("diagonal-secundaria")}>Diagonal Secundaria</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700">Multiplicação por escalar</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700">Multiplicação</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700">Nula</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700">Soma</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700">Subtração</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("multiplicacao-por-escalar")}>Multiplicação por escalar</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("multiplicacao")}>Multiplicação</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("nula")}>Nula</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("soma")}>Soma</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("subtracao")}>Subtração</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("transposta")}>Transposta</Button>
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("inversa")}>Inversa</Button>
                 </div>
                 <div className="w-4/5 gap-4">
                     <div className="rounded bg-slate-950 flex gap-1 min-h-fit p-4 ">
