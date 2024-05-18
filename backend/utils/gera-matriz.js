@@ -13,6 +13,5 @@ export function geraMatriz(rows, columns, matrixValues) {
       k++;
     }
   }
-
   return matrix;
 }

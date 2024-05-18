@@ -3,20 +3,20 @@ import { geraMatriz } from "../utils/gera-matriz.js";
 
 const multiplicacaoPorEscalar = Router();
 
-multiplicacaoPorEscalar.post("/multiplicacao-por-escalar", (req, res) => {
-  const { rowsMatrizA, columnsMatrizA, valuesMatrizA, escalar } = req.body;
+multiplicacaoPorEscalar.post("/multiplicacaoPorEscalar", (req, res) => {
+  const { rows1, cols1, matrix1, escalar } = req.body;
 
   if (
-    !rowsMatrizA ||
-    !columnsMatrizA ||
-    !valuesMatrizA ||
+    !rows1 ||
+    !cols1 ||
+    !matrix1 ||
     escalar === undefined ||
     isNaN(escalar)
   ) {
     return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
-  const matrizA = geraMatriz(rowsMatrizA, columnsMatrizA, valuesMatrizA);
+  const matrizA = geraMatriz(rows1, cols1, matrix1);
 
   let resultado = [];
   let passoAPasso = [];

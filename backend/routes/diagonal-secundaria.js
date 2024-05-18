@@ -3,20 +3,20 @@ import { geraMatriz } from "../utils/gera-matriz.js";
 
 const diagonalSecundaria = Router();
 
-diagonalSecundaria.post("/diagonal-secundaria", (req, res) => {
-  const { rows, cols, matrix1 } = req.body;
+diagonalSecundaria.post("/somaDiagonalSecundaria", (req, res) => {
+  const { rows1, cols1, matrix1 } = req.body;
 
-  if (!rows || !cols || !matrix1 || !Array.isArray(matrix1)) {
+  if (!rows1 || !cols1 || !matrix1 || !Array.isArray(matrix1)) {
     return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
-  if (rows <= 0 || cols <= 0) {
+  if (rows1 <= 0 || cols1 <= 0) {
     return res
       .status(400)
       .send({ erro: "A matriz deve ter pelo menos uma linha e uma coluna." });
   }
 
-  if (rows !== cols) {
+  if (rows1 !== cols1) {
     return res
       .status(400)
       .send({
@@ -24,7 +24,7 @@ diagonalSecundaria.post("/diagonal-secundaria", (req, res) => {
       });
   }
 
-  const matrix = geraMatriz(rows, cols, matrix1);
+  const matrix = geraMatriz(rows1, cols1, matrix1);
 
   let diagonalSecundaria = [];
 
@@ -32,9 +32,9 @@ diagonalSecundaria.post("/diagonal-secundaria", (req, res) => {
     diagonalSecundaria.push(matrix[i][matrix[i].length - 1 - i]);
   }
 
-  let soma = diagonalSecundaria.reduce((acc, valor) => acc + valor, 0);
+  let somaDiagonalSecundaria = diagonalSecundaria.reduce((acc, valor) => acc + valor, 0);
 
-  res.status(200).send({ diagonalSecundaria: diagonalSecundaria, soma: soma });
+  res.status(200).send({ diagonalSecundaria: diagonalSecundaria, somaDiagonalSecundaria: somaDiagonalSecundaria });
 });
 
 export { diagonalSecundaria };

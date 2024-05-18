@@ -5,33 +5,33 @@ const soma = Router();
 
 soma.post("/soma", (req, res) => {
   const {
-    rowsMatrizA,
-    columnsMatrizA,
-    valuesMatrizA,
-    rowsMatrizB,
-    columnsMatrizB,
-    valuesMatrizB,
+    rows1,
+    cols1,
+    matrix1,
+    rows2,
+    cols2,
+    matrix2,
   } = req.body;
 
   if (
-    !rowsMatrizA ||
-    !columnsMatrizA ||
-    !valuesMatrizA ||
-    !rowsMatrizB ||
-    !columnsMatrizB ||
-    !valuesMatrizB
+    !rows1 ||
+    !cols1 ||
+    !matrix1 ||
+    !rows2 ||
+    !cols2 ||
+    !matrix2
   ) {
     return res.status(400).send({ erro: "Dados de entrada inválidos" });
   }
 
-  if (rowsMatrizA !== rowsMatrizB || columnsMatrizA !== columnsMatrizB) {
+  if (rows1 !== rows2 || cols1 !== cols2) {
     return res.status(400).send({
       erro: "As matrizes devem ter o mesmo número de linhas e colunas para a soma poder ser realizada",
     });
   }
 
-  const matrizA = geraMatriz(rowsMatrizA, columnsMatrizA, valuesMatrizA);
-  const matrizB = geraMatriz(rowsMatrizB, columnsMatrizB, valuesMatrizB);
+  const matrizA = geraMatriz(rows1, cols1, matrix1);
+  const matrizB = geraMatriz(rows2, cols2, matrix2);
 
   let resultado = [];
   let passoAPasso = [];
