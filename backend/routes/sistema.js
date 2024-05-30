@@ -2,18 +2,18 @@ import { Router } from "express";
 
 const sistema = Router();
 
-sistema.post("/sistema", (req, res) => {
-  const { system } = req.body;
+sistema.post("/responseSistema", (req, res) => {
+  const { sistema } = req.body;
 
-  if (!system || !Array.isArray(system) || system.length === 0) {
+  if (!sistema || !Array.isArray(sistema) || sistema.length === 0) {
     return res.status(400).json({ error: "Sistema de equações não fornecido ou em formato inválido." });
   }
 
-  const n = system.length;
+  const n = sistema.length;
 
   const expectedTermCount = n + 1;
   for (let i = 0; i < n; i++) {
-    if (!Array.isArray(system[i]) || system[i].length !== expectedTermCount) {
+    if (!Array.isArray(sistema[i]) || sistema[i].length !== expectedTermCount) {
       return res.status(400).json({ error: "Cada equação deve ter o mesmo número de termos (incógnitas + constante)." });
     }
   }
@@ -21,7 +21,7 @@ sistema.post("/sistema", (req, res) => {
   const matrix = [];
 
   for (let i = 0; i < n; i++) {
-    const equation = system[i];
+    const equation = sistema[i];
     const coefficients = [];
     for (let j = 0; j < n; j++) {
       const term = equation[j];
@@ -66,16 +66,16 @@ sistema.post("/sistema", (req, res) => {
     }
   }
 
-  const resposta = new Array(n);
+  const responseSistema = new Array(n);
   for (let i = n - 1; i >= 0; i--) {
-    resposta[i] = matrix[i][n];
+    responseSistema[i] = matrix[i][n];
     for (let j = i + 1; j < n; j++) {
-      resposta[i] -= matrix[i][j] * resposta[j];
+      responseSistema[i] -= matrix[i][j] * responseSistema[j];
     }
-    resposta[i] /= matrix[i][i];
-    resposta[i] = parseFloat(resposta[i].toFixed(3));
+    responseSistema[i] /= matrix[i][i];
+    responseSistema[i] = parseFloat(responseSistema[i].toFixed(3));
   }
-  return res.status(200).json({ resposta });
+  return res.status(200).json({ responseSistema });
 });
 
 export { sistema };

@@ -9,16 +9,19 @@ export const MatrixCalc = () => {
     const [cols2, setCols2] = useState<number>(1);
     const [matrix1, setMatrix1] = useState<number[][]>([]);
     const [matrix2, setMatrix2] = useState<number[][]>([]);
+    const [sistema, setSistema] = useState<string[][]>([]);
     const [resultMatrix, setResultMatrix] = useState<string>("");
     const [calculationType, setCalculationType] = useState<string>("");
     const [calculationSymbol, setCalculationSymbol] = useState<string>("");
-    const [mostrarDiv, setMostrarDiv] = useState(true);
+
 
     const createMatrix = () => {
         const newMatrix1: number[][] = Array.from({ length: rows1 }, () => Array(cols1).fill(0));
         const newMatrix2: number[][] = Array.from({ length: rows2 }, () => Array(cols2).fill(0));
+        const newSistema: string[][] = Array.from({ length: rows1 }, () => Array(cols1 + 1).fill(0));
         setMatrix1(newMatrix1);
         setMatrix2(newMatrix2);
+        setSistema(newSistema);
     };
 
     const handleCalculationTypeChange = (type: string) => {
@@ -36,93 +39,79 @@ export const MatrixCalc = () => {
             default:
                 setCalculationSymbol("");
         }
-        const shouldHideDiv = ["determinante", "somaDiagonalPrincipal", "somaDiagonalSecundaria", "transposta", "inversa", "nula"].includes(type);
-        setMostrarDiv(!shouldHideDiv);
         setCalculationType(type);
     };
 
     const setMatrixCalc = () => {
-        if (!rows1 || !cols1) {
-            window.alert('Defina as dimensões da matriz 1.');
-            return;
+        const bodyData = {
+            rows1,
+            cols1,
+            matrix1: matrix1.flat(),
+            rows2,
+            cols2,
+            matrix2: matrix2.flat(),
+            escalar: matrix2.flat(),
+            sistema
         }
-
-        if (["determinante", "somaDiagonalPrincipal", "somaDiagonalSecundaria", "transposta", "inversa", "nula"].includes(calculationType)) {
-            try {
-                const array: number[] = matrix1.flat();
-                fetch(`http://localhost:3333/matriz/${calculationType}`, {
-                    method: "POST",
-                    headers: { "Content-type": "application/json" },
-                    body: JSON.stringify({
-                        rows1,
-                        cols1,
-                        matrix1: array
-                    })
+        try {
+            fetch(`http://localhost:3333/matriz/${calculationType}`, {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(bodyData)
+            })
+                .then((res) => {
+                    if (!res.ok) {
+                        return res.text().then(text => { throw new Error(text) });
+                    }
+                    return res.json();
                 })
-                    .then((res) => {
-                        if (!res.ok) {
-                            return res.text().then(text => { throw new Error(text) });
-                        }
-                        return res.json();
-                    })
-                    .then((data) => {
-                        if (Array.isArray(data[calculationType])) {
-                            setResultMatrix(formatMatrixResult(data[calculationType]));
-                        } else {
+                .then((data) => {
+                    if (Array.isArray(data[calculationType])) {
+                        if (calculationType === "responseSistema") {
                             setResultMatrix(data[calculationType]);
+                        } else {
+                            setResultMatrix(formatMatrixResult(data[calculationType]));
                         }
-                    })
-                    .catch((err: any) => {
-                        setResultMatrix(err.message);
-                    });
-            } catch (Erro: any) {
-                setResultMatrix(`Erro: ${Erro.message}`);
-            }
-        } else if (["multiplicacao", "soma", "subtracao", "multiplicacaoPorEscalar"].includes(calculationType)) {
-            try {
-                const array1: number[] = matrix1.flat();
-                const array2: number[] = matrix2.flat();
-                fetch(`http://localhost:3333/matriz/${calculationType}`, {
-                    method: "POST",
-                    headers: { "Content-type": "application/json" },
-                    body: JSON.stringify({
-                        rows1,
-                        cols1,
-                        matrix1: array1,
-                        rows2,
-                        cols2,
-                        matrix2: array2,
-                        escalar: array2
-                    })
+                    } else {
+                        setResultMatrix(data[calculationType]);
+                    }
                 })
-                    .then((res) => {
-                        if (!res.ok) {
-                            return res.text().then(text => { throw new Error(text) });
-                        }
-                        return res.json();
-                    })
-                    .then((data) => {
-                        if (Array.isArray(data[calculationType])) {
-                            setResultMatrix(formatMatrixResult(data[calculationType]));
-                        } else {
-                            setResultMatrix(data[calculationType]);
-                        }
-                    })
-                    .catch((err: any) => {
-                        setResultMatrix(err.message);
-                    });
-            } catch (Erro: any) {
-                window.alert(`Erro: ${Erro.message}`);
-            }
+                .catch((err: any) => {
+                    setResultMatrix(err.message);
+                });
+        } catch (Erro: any) {
+            setResultMatrix(`Erro: ${Erro.message}`);
         }
     };
 
-    const formatMatrixResult = (result: number[][]) => {
-        const maxCols = Math.max(...result.map(row => row.length));
-        return result.map(row => {
-            const paddedRow = [...row, ...Array(maxCols - row.length).fill("\t")];
-            return paddedRow.join("\t");
-        }).join("\n");
+    const formatMatrixResult = (result: any[][]) => {
+        if (result.length === 0) {
+            return "A matriz resultante está vazia.";
+        }
+
+        const numCols = result[0].length;
+
+        const maxColumnWidths = Array.from({ length: numCols }, () => 0);
+        result.forEach(row => {
+            row.forEach((cell, colIndex) => {
+                const cellWidth = String(cell).length;
+                if (cellWidth > maxColumnWidths[colIndex]) {
+                    maxColumnWidths[colIndex] = cellWidth;
+                }
+            });
+        });
+
+        const formattedRows = result.map((row) => {
+            // Preenche cada célula com espaços em branco para ter a mesma largura
+            const formattedRow = row.map((cell, colIndex) => {
+                return String(cell).padStart(maxColumnWidths[colIndex]);
+            });
+            // Junta os elementos da linha separados por tabulação
+            return formattedRow.join("\t");
+        });
+
+        // Junta as linhas formatadas separadas por quebra de linha
+        return formattedRows.join("\n");
     };
 
     const handleMatrix1Change = (rowIndex: number, colIndex: number, value: string) => {
@@ -145,17 +134,40 @@ export const MatrixCalc = () => {
         setMatrix2(newMatrix2);
     };
 
-    const renderMatrixInputs = (matrix: number[][], handleChange: Function) => {
+    const handleSistemaChange = (rowIndex: number, colIndex: number, value: string) => {
+        const newSistema = sistema.map((row, i) => {
+            if (i === rowIndex) {
+                return row.map((cell, j) => (j === colIndex ? value : cell));
+            }
+            return row;
+        });
+        setSistema(newSistema);
+    };
+
+    const renderMatrixInputs = (matrix: any[][], handleChange: Function) => {
         return matrix.map((row, rowIndex) => (
             <div key={rowIndex} className="flex justify-evenly">
                 {row.map((cell, colIndex) => (
-                    <input
-                        className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 text-center m-0.5"
-                        key={colIndex}
-                        type="text"
-                        value={cell}
-                        onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-                    />
+                    <React.Fragment key={colIndex}>
+                        {calculationType === "responseSistema" && colIndex === row.length - 1 ? (
+                            <>
+                                <span className="text-white mx-2">=</span>
+                                <input
+                                    className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 text-center m-0.5"
+                                    type="text"
+                                    value={cell}
+                                    onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
+                                />
+                            </>
+                        ) : (
+                            <input
+                                className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 text-center m-0.5"
+                                type="text"
+                                value={cell}
+                                onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
+                            />
+                        )}
+                    </React.Fragment>
                 ))}
             </div>
         ));
@@ -168,6 +180,7 @@ export const MatrixCalc = () => {
             </div>
             <div className="w-4/5 mx-auto flex gap-4 bg-gray-900 rounded p-10 min-h-fit">
                 <div className="rounded bg-slate-950 flex flex-col gap-5 min-h-fit">
+                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("responseSistema")}>Sistema</Button>
                     <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("determinante")}>Determinante</Button>
                     <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("somaDiagonalPrincipal")}>Diagonal Principal</Button>
                     <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("somaDiagonalSecundaria")}>Diagonal Secundaria</Button>
@@ -201,7 +214,7 @@ export const MatrixCalc = () => {
                                 onChange={(e) => setCols1(parseInt(e.target.value))}
                             />
                         </div>
-                        {mostrarDiv && (
+                        {["multiplicacao", "soma", "subtracao"].includes(calculationType) && (
                             <div className="flex flex-row justify-evenly items-center basis-1/3">
                                 <p>Matriz 2:</p>
                                 <input
@@ -234,19 +247,31 @@ export const MatrixCalc = () => {
                     </div>
                     <div className="p-10 flex flex-col justify-items-center items-center min-h-fit">
                         <div className="flex justify-items-center items-center min-h-fit">
-                            <div className={`grid grid-rows-${rows1} basis-1/3 p-10`}>
-                                {renderMatrixInputs(matrix1, handleMatrix1Change)}
-                            </div>
-                            {mostrarDiv && (
-                                <div className="basis-1/3 font-black text-4xl hover:text-purple-800">{calculationSymbol}</div>
-                            )}
-                            {mostrarDiv && (
-                                <div className="p-10 flex justify-items-center items-center min-h-fit">
-                                    <div className={`grid grid-rows-${rows2} basis-1/3`}>
-                                        {renderMatrixInputs(matrix2, handleMatrix2Change)}
+                            {["determinante", "somaDiagonalPrincipal", "somaDiagonalSecundaria",
+                                "transposta", "inversa", "nula", "multiplicacao", "soma",
+                                "subtracao", "multiplicacaoPorEscalar"].includes(calculationType) && (
+                                    <div className={`grid grid-rows-${rows1} basis-1/3 p-10`}>
+                                        {renderMatrixInputs(matrix1, handleMatrix1Change)}
                                     </div>
+                                )}
+
+                            {["multiplicacao", "soma", "subtracao", "multiplicacaoPorEscalar"].includes(calculationType) && (
+                                <>
+                                    <div className="basis-1/3 font-black text-4xl hover:text-purple-800">{calculationSymbol}</div>
+                                    <div className="p-10 flex justify-items-center items-center min-h-fit">
+                                        <div className={`grid grid-rows-${rows2} basis-1/3`}>
+                                            {renderMatrixInputs(matrix2, handleMatrix2Change)}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {["responseSistema"].includes(calculationType) && (
+                                <div className={`grid grid-rows-${rows1} basis-1/3 p-10`}>
+                                    {renderMatrixInputs(sistema, handleSistemaChange)}
                                 </div>
                             )}
+
                             <div>
                             </div>
                         </div>
