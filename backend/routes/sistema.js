@@ -75,7 +75,14 @@ sistema.post("/responseSistema", (req, res) => {
     responseSistema[i] /= matrix[i][i];
     responseSistema[i] = parseFloat(responseSistema[i].toFixed(3));
   }
-  return res.status(200).json({ responseSistema });
+
+  const solution = {};
+  const labels = ['x', 'y', 'z'];
+  for (let i = 0; i < responseSistema.length; i++) {
+    solution[labels[i]] = responseSistema[i];
+  }
+
+  return res.status(200).json({ responseSistema: solution });
 });
 
 export { sistema };
