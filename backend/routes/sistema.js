@@ -5,7 +5,19 @@ const sistema = Router();
 sistema.post("/sistema", (req, res) => {
   const { system } = req.body;
 
+  if (!system || !Array.isArray(system) || system.length === 0) {
+    return res.status(400).json({ error: "Sistema de equações não fornecido ou em formato inválido." });
+  }
+
   const n = system.length;
+
+  const expectedTermCount = n + 1;
+  for (let i = 0; i < n; i++) {
+    if (!Array.isArray(system[i]) || system[i].length !== expectedTermCount) {
+      return res.status(400).json({ error: "Cada equação deve ter o mesmo número de termos (incógnitas + constante)." });
+    }
+  }
+
   const matrix = [];
 
   for (let i = 0; i < n; i++) {
@@ -33,6 +45,12 @@ sistema.post("/sistema", (req, res) => {
   }
 
   for (let i = 0; i < n; i++) {
+    if (matrix[i][i] === 0) {
+      return res.status(400).json({ error: "Divisão por zero detectada. O sistema não pode ser resolvido." });
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
     let maxRow = i;
     for (let j = i + 1; j < n; j++) {
       if (Math.abs(matrix[j][i]) > Math.abs(matrix[maxRow][i])) {
@@ -57,7 +75,6 @@ sistema.post("/sistema", (req, res) => {
     resposta[i] /= matrix[i][i];
     resposta[i] = parseFloat(resposta[i].toFixed(3));
   }
-  console.log(resposta)
   return res.status(200).json({ resposta });
 });
 
