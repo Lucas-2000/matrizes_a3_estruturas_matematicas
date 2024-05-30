@@ -44,7 +44,7 @@ function calcularMatrizInversa(matriz) {
   }
 
   const inversa = matrizAumentada.map((linha) =>
-    linha.slice(n).map((valor) => parseFloat(valor.toFixed(2)))
+    linha.slice(n).map((valor) => parseFloat(valor.toFixed(3)))
   );
 
   return inversa;

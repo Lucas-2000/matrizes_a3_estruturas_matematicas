@@ -55,9 +55,9 @@ sistema.post("/sistema", (req, res) => {
       resposta[i] -= matrix[i][j] * resposta[j];
     }
     resposta[i] /= matrix[i][i];
-    resposta[i] = parseFloat(resposta[i].toFixed(2));
+    resposta[i] = parseFloat(resposta[i].toFixed(3));
   }
-
+  console.log(resposta)
   return res.status(200).json({ resposta });
 });
 
