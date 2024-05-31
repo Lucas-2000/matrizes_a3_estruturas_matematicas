@@ -14,6 +14,19 @@ export const MatrixCalc = () => {
     const [calculationType, setCalculationType] = useState<string>("");
     const [calculationSymbol, setCalculationSymbol] = useState<string>("");
 
+    const radioButtons = [
+        { label: "Sistema", type: "responseSistema" },
+        { label: "Determinante", type: "determinante" },
+        { label: "Diagonal Principal", type: "somaDiagonalPrincipal" },
+        { label: "Diagonal Secundaria", type: "somaDiagonalSecundaria" },
+        { label: "Multiplicação por escalar", type: "multiplicacaoPorEscalar" },
+        { label: "Multiplicação", type: "multiplicacao" },
+        { label: "Nula", type: "nula" },
+        { label: "Soma", type: "soma" },
+        { label: "Subtração", type: "subtracao" },
+        { label: "Transposta", type: "transposta" },
+        { label: "Inversa", type: "inversa" },
+    ];
 
     const createMatrix = () => {
         const newMatrix1: number[][] = Array.from({ length: rows1 }, () => Array(cols1).fill(0));
@@ -25,6 +38,7 @@ export const MatrixCalc = () => {
     };
 
     const handleCalculationTypeChange = (type: string) => {
+
         switch (type) {
             case "multiplicacaoPorEscalar":
             case "multiplicacao":
@@ -67,13 +81,9 @@ export const MatrixCalc = () => {
                 })
                 .then((data) => {
                     if (Array.isArray(data[calculationType])) {
-                        if (calculationType === "responseSistema") {
-                            setResultMatrix(data[calculationType]);
-                        } else {
-                            setResultMatrix(formatMatrixResult(data[calculationType]));
-                        }
+                        setResultMatrix(formatMatrixResult(data[calculationType]));
                     } else {
-                        setResultMatrix(data[calculationType]);
+                        setResultMatrix(JSON.stringify(data[calculationType], null, 2));
                     }
                 })
                 .catch((err: any) => {
@@ -82,37 +92,35 @@ export const MatrixCalc = () => {
         } catch (Erro: any) {
             setResultMatrix(`Erro: ${Erro.message}`);
         }
+        console.log(resultMatrix)
     };
 
     const formatMatrixResult = (result: any[][]) => {
         if (result.length === 0) {
-            return "A matriz resultante está vazia.";
+            return "A matriz fornecida está vazia.";
         }
 
         const numCols = result[0].length;
-
         const maxColumnWidths = Array.from({ length: numCols }, () => 0);
-        result.forEach(row => {
+
+        result.forEach((row) => {
             row.forEach((cell, colIndex) => {
-                const cellWidth = String(cell).length;
-                if (cellWidth > maxColumnWidths[colIndex]) {
-                    maxColumnWidths[colIndex] = cellWidth;
-                }
+                const cellWidth = cell.toString().length;
+                maxColumnWidths[colIndex] = Math.max(maxColumnWidths[colIndex], cellWidth);
             });
         });
 
         const formattedRows = result.map((row) => {
-            // Preenche cada célula com espaços em branco para ter a mesma largura
             const formattedRow = row.map((cell, colIndex) => {
-                return String(cell).padStart(maxColumnWidths[colIndex]);
+                const paddedCell = `[${cell.toString()}]`.padStart(maxColumnWidths[colIndex] + 2);
+                return paddedCell;
             });
-            // Junta os elementos da linha separados por tabulação
             return formattedRow.join("\t");
         });
 
-        // Junta as linhas formatadas separadas por quebra de linha
         return formattedRows.join("\n");
     };
+
 
     const handleMatrix1Change = (rowIndex: number, colIndex: number, value: string) => {
         const newMatrix1 = matrix1.map((row, i) => {
@@ -175,22 +183,25 @@ export const MatrixCalc = () => {
 
     return (
         <section className="min-w-fit gap-5 flex flex-col justify-items-center items-center rounded">
-            <div className="w-4/5 mx-auto flex gap-4 bg-gray-900 rounded p-10 font-black text-4xl hover:text-sky-700">
+            <div className="w-4/5 mx-auto flex gap-4 bg-gray-900 rounded p-10 font-black text-4xl">
                 Calculadora de matrizes
             </div>
             <div className="w-4/5 mx-auto flex gap-4 bg-gray-900 rounded p-10 min-h-fit">
                 <div className="rounded bg-slate-950 flex flex-col gap-5 min-h-fit">
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("responseSistema")}>Sistema</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("determinante")}>Determinante</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("somaDiagonalPrincipal")}>Diagonal Principal</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("somaDiagonalSecundaria")}>Diagonal Secundaria</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("multiplicacaoPorEscalar")}>Multiplicação por escalar</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("multiplicacao")}>Multiplicação</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("nula")}>Nula</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("soma")}>Soma</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("subtracao")}>Subtração</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("transposta")}>Transposta</Button>
-                    <Button className="focus:bg-purple-800 rounded hover:bg-sky-700" onClick={() => handleCalculationTypeChange("inversa")}>Inversa</Button>
+                    {radioButtons.map((radio, index) => (
+                        <label key={index} className="p-0 m-0 flex justify-items-center items-center">
+                            <input
+                                className="appearance-none peer"
+                                type="radio"
+                                name="calculationType"
+                                value={radio.type}
+                                checked={calculationType === radio.type}
+                                onChange={(e) => handleCalculationTypeChange(e.target.value)}
+                            />
+                            <div className="peer-checked:bg-purple-800 size-full rounded cursor-pointer">{radio.label}</div>
+
+                        </label>
+                    ))}
                 </div>
                 <div className="w-4/5 gap-4">
                     <div className="rounded bg-slate-950 flex gap-1 min-h-fit p-4">
