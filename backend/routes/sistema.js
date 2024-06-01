@@ -11,13 +11,6 @@ sistema.post("/responseSistema", (req, res) => {
 
   const n = sistema.length;
 
-  const expectedTermCount = n + 1;
-  for (let i = 0; i < n; i++) {
-    if (!Array.isArray(sistema[i]) || sistema[i].length !== expectedTermCount) {
-      return res.status(400).json({ error: "Cada equação deve ter o mesmo número de termos (incógnitas + constante)." });
-    }
-  }
-
   const matrix = [];
 
   for (let i = 0; i < n; i++) {
@@ -51,18 +44,19 @@ sistema.post("/responseSistema", (req, res) => {
   }
 
   for (let i = 0; i < n; i++) {
-    let maxRow = i;
-    for (let j = i + 1; j < n; j++) {
-      if (Math.abs(matrix[j][i]) > Math.abs(matrix[maxRow][i])) {
-        maxRow = j;
-      }
-    }
-    [matrix[i], matrix[maxRow]] = [matrix[maxRow], matrix[i]];
     for (let j = i + 1; j < n; j++) {
       const factor = matrix[j][i] / matrix[i][i];
       for (let k = i; k < n + 1; k++) {
         matrix[j][k] -= factor * matrix[i][k];
       }
+    }
+  }
+
+  for (let i = n - 1; i >= 0; i--) {
+    if (matrix[i][i] === 0 && matrix[i][n] !== 0) {
+      return res.status(200).json({ responseSistema: "O sistema não tem solução." });
+    } else if (matrix[i][i] === 0 && matrix[i][n] === 0) {
+      return res.status(200).json({ responseSistema: "O sistema tem infinitas soluções." });
     }
   }
 
