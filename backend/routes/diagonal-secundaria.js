@@ -16,14 +16,6 @@ diagonalSecundaria.post("/somaDiagonalSecundaria", (req, res) => {
       .send({ erro: "A matriz deve ter pelo menos uma linha e uma coluna." });
   }
 
-  if (rows1 !== cols1) {
-    return res
-      .status(400)
-      .send({
-        erro: "A matriz deve ser quadrada para calcular a sua transposta",
-      });
-  }
-
   const matrix = geraMatriz(rows1, cols1, matrix1);
 
   let diagonalSecundaria = [];
