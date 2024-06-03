@@ -115,7 +115,7 @@ export const MatrixCalc = () => {
                 const paddedCell = `[${cell.toString()}]`.padStart(maxColumnWidths[colIndex] + 2);
                 return paddedCell;
             });
-            return formattedRow.join("\t");
+            return formattedRow.join(" ");
         });
 
         return formattedRows.join("\n");
@@ -161,7 +161,7 @@ export const MatrixCalc = () => {
                             <>
                                 <span className="text-white mx-2">=</span>
                                 <input
-                                    className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 text-center m-0.5"
+                                    className="focus:border-purple-800 rounded bg-white text-black hover:border-sky-700 border-2 w-10 text-center m-0.5"
                                     type="text"
                                     value={cell}
                                     onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
@@ -169,7 +169,7 @@ export const MatrixCalc = () => {
                             </>
                         ) : (
                             <input
-                                className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 text-center m-0.5"
+                                className="focus:border-purple-800 rounded bg-white text-black hover:border-sky-700 border-2 w-10 text-center m-0.5"
                                 type="text"
                                 value={cell}
                                 onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
@@ -208,7 +208,7 @@ export const MatrixCalc = () => {
                         <div className="flex flex-row justify-evenly items-center basis-1/3">
                             <p>Matriz 1:</p>
                             <input
-                                className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 m-0.5 text-center"
+                                className="focus:border-purple-800 rounded bg-white text-black hover:border-sky-700 border-2 w-10 m-0.5 text-center"
                                 type="text"
                                 id="rowsInput"
                                 name="rows"
@@ -217,7 +217,7 @@ export const MatrixCalc = () => {
                             />
                             <p>X</p>
                             <input
-                                className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 m-0.5 text-center"
+                                className="focus:border-purple-800 bg-white text-black rounded hover:border-sky-700 border-2 w-10 m-0.5 text-center"
                                 type="text"
                                 id="colsInput"
                                 name="cols"
@@ -229,7 +229,7 @@ export const MatrixCalc = () => {
                             <div className="flex flex-row justify-evenly items-center basis-1/3">
                                 <p>Matriz 2:</p>
                                 <input
-                                    className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 m-0.5 text-center"
+                                    className="focus:border-purple-800 rounded bg-white text-black hover:border-sky-700 border-2 w-10 m-0.5 text-center"
                                     type="text"
                                     id="rowsInput"
                                     name="rows"
@@ -238,7 +238,7 @@ export const MatrixCalc = () => {
                                 />
                                 <p>X</p>
                                 <input
-                                    className="focus:border-purple-800 rounded hover:border-sky-700 border-2 w-10 m-0.5 text-center"
+                                    className="focus:border-purple-800 rounded bg-white text-black hover:border-sky-700 border-2 w-10 m-0.5 text-center"
                                     type="text"
                                     id="colsInput"
                                     name="cols"
@@ -294,7 +294,7 @@ export const MatrixCalc = () => {
                             Resultado
                         </div>
                         <div className="rounded min-h-fit min-w-full">
-                            <Textarea className="focus:border-purple-800 rounded hover:border-sky-700 border-2" value={resultMatrix} readOnly rows={rows1}></Textarea>
+                            <Textarea className="focus:border-purple-800 rounded bg-white text-black hover:border-sky-700 border-2" value={resultMatrix} readOnly rows={rows1}></Textarea>
                         </div>
                     </div>
                 </div>
