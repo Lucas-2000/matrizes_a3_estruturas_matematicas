@@ -37,11 +37,11 @@ sistema.post("/responseSistema", (req, res) => {
     matrix.push(coefficients);
   }
 
-  for (let i = 0; i < n; i++) {
-    if (matrix[i][i] === 0) {
-      return res.status(400).json({ error: "Divisão por zero detectada. O sistema não pode ser resolvido." });
-    }
-  }
+  // for (let i = 0; i < n; i++) {
+  //   if (matrix[i][i] === 0) {
+  //     return res.status(400).json({ error: "Divisão por zero detectada. O sistema não pode ser resolvido." });
+  //   }
+  // }
 
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
